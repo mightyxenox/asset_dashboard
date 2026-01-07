@@ -1,0 +1,38 @@
+{
+  "name": "asset_dashboard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cassandra-driver": "^4.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "ioredis": "^5.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.1",
+    "node-fetch": "^2.7.0",
+    "react-toastify": "^11.0.5",
+    "redis": "^5.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mightyxenox/asset_dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mightyxenox/asset_dashboard/issues"
+  },
+  "homepage": "https://github.com/mightyxenox/asset_dashboard#readme",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

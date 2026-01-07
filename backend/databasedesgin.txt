@@ -1,0 +1,43 @@
+/login-> data(username,password)->check from database 
+if valid user credentials then same as take the user to the homepage/dashboard
+else display error
+and make him signed in using jwt token
+
+/signup-> data(username,password)->check from database->if error throw 
+else save the user's info
+take the user to the homepage/dashboard
+
+userdb-> {
+    partition_key : "user_"+ ${username}
+    sort_key : "user_"+ ${username}
+    username : ${username}
+    password : ${hash_password}
+    name : ${name}
+    user_id : 123
+}
+frontend add portfolio then save assets bought
+/save/coins-> save data in the db and return success response
+input->{
+    coin_symbol : "btc"
+    coin_qty : "10"
+    amount_invested : "100"
+    wallet : "binanace"
+}
+
+db->{
+    partition_key : "user_"+ ${123}
+    sort_key : "user_"+ ${coin_symbol}+ "_binance"
+    coin_symbol : "btc"
+    coin_qty : "10"
+    amount_invested : "100"
+    wallet : "binance"
+    user_id : 123
+}
+
+/get/coins-> total value invested->net pnl
+sort using wallet and coins-> list of coins in a particular wallet or list of wallet for a particular coin
+also pnl in each case for each coin in each wallet 
+pie/line chart (price vs time) for each coin and also for the total value invested
+search bar for coins and wallets
+by default list of all coins also sorted by performance
+buy and sell coins options

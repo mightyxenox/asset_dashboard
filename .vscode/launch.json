@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Backend",
+      "program": "${workspaceFolder}/backend/index.js", 
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeArgs": ["--inspect"],
+      "envFile": "${workspaceFolder}/backend/.env"
+    }
+  ]
+}

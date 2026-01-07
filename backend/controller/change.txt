@@ -1,0 +1,66 @@
+-> use length function to check empty string 
+-> use if not exists 
+-> add pnl for wallet by making wallet as sort key
+-> list coins and list wallets api
+-> get holding which has 3 api -> get holding on basis of wallet, coins and also by wallet + coins
+
+
+
+
+
+-> make it coins by default
+-> save pnl of coin and by wallet
+-> make 
+
+filter 1-> by coin
+{
+    overall data,
+    coin1: { coin1_meta },
+    coin2: { coin2_meta },
+    coin3: { coin3_meta }
+}
+
+filter 1-> by wallet
+{
+    overall data,
+    wallet1: { wallet1_meta },
+    wallet2: { wallet2_meta },
+    wallet3: { wallet3_meta }
+}
+
+filter 1+2-> by coin+coin1{
+    overall data,
+    coin1: { coin1_meta },
+}
+
+filter 1+2-> by wallet+coin1{
+    overall data,
+    wallet1: { coin1_meta },
+    wallet2: { coin1_meta },
+    wallet3: { coin1_meta }
+}
+
+filter 1+3 -> by coin+wallet1{
+    overall data,
+    coin1: { wallet1_meta },
+    coin2: { wallet1_meta },
+    coin3: { wallet1_meta }
+}
+
+filter 1+3 -> by wallet+wallet1{
+    overall data,
+    wallet1: { wallet1_meta },
+}
+
+filter 2+3 -> by wallet1+coin1{
+    ovreall data,
+    wallet1+coin1:{ wallet1_meta + coin1_meta }
+}
+
+->handle different users at once
+
+
+
+
+
+diff between sql and nosql
