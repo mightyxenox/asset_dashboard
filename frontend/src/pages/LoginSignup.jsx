@@ -34,8 +34,8 @@ const LoginSignup = () => {
     setLoading(true);
 
     const endpoint = isLogin
-      ? 'http://localhost:8000/api/login'
-      : 'http://localhost:8000/api/signup';
+      ? 'https://asset-dashboard-bcnv.onrender.com/api/login'
+      : 'https://asset-dashboard-bcnv.onrender.com/api/signup';
 
     const payload = isLogin
       ? {
