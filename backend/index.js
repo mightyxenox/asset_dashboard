@@ -26,6 +26,7 @@ app.use('/api', require('./routes/auth_routes'));
 
 app.use('/api', require('./routes/dashboard_routes'));
 
-app.listen(8000, () => {
-    console.log("Server is running on port 8000");
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
