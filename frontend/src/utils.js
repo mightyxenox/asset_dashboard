@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://asset-dashboard-bcnv.onrender.com';
 
 export const fetchWithAuth = async (path, options = {}) => {
   const token = localStorage.getItem('token');
