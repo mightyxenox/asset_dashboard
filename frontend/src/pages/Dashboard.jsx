@@ -8,7 +8,7 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d0ed57'
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { wallets, coins } = useData();
+  const { wallets, coins, error: contextError } = useData();
   const [groupBy, setGroupBy] = useState('wallet');
   const [walletFilter, setWalletFilter] = useState('');
   const [coinFilter, setCoinFilter] = useState('');
@@ -16,6 +16,12 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (contextError) {
+      console.warn('Dashboard: Context error:', contextError);
+    }
+  }, [contextError]);
 
   const formatPnl = (value) => {
     const color = value > 0 ? 'text-green-600' : value < 0 ? 'text-red-600' : 'text-gray-600';
