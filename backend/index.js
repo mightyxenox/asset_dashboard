@@ -27,20 +27,37 @@ app.use((req, res, next) => {
 
 // STEP 4 - Add per-user rate limiting (OPTIONAL but good)
 const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 100, // 100 requests per minute per user
+  windowMs: 15 * 60 * 1000, // 15 minute window
+  max: 1000, // 1000 requests per 15 minutes per user
   keyGenerator: (req, res) => {
     // Use user ID from token if available, otherwise use IP
     try {
-      const token = req.headers.authorization?.split(' ')[1];
-      if (token) {
-        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-        return payload.user_id || payload.userId || req.ip;
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        const token = authHeader.startsWith('Bearer ') 
+          ? authHeader.slice(7) 
+          : authHeader.split(' ')[1];
+        
+        if (token) {
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+            const userId = payload.user_id || payload.userId || payload.id;
+            if (userId) {
+              return `user_${userId}`;
+            }
+          }
+        }
       }
     } catch (err) {
-      // Fallback to IP if token parsing fails
+      console.error('Rate limiter key generation error:', err.message);
     }
-    return req.ip;
+    // Fallback to IP if token parsing fails
+    return `ip_${req.ip}`;
+  },
+  skip: (req, res) => {
+    // Skip rate limiting for auth routes (login/signup)
+    return req.path.includes('/auth');
   },
   handler: (req, res) => {
     res.status(429).json({
