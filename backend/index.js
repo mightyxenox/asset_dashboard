@@ -11,6 +11,13 @@ app.use(cors({
   credentials: true,
 }));
 
+// Disable rate limiting headers for Render
+app.use((req, res, next) => {
+  res.set('X-RateLimit-Bypass', 'true');
+  res.set('Retry-After', '');
+  next();
+});
+
 const connectDB = require('./scylla_db/db_connect');
 connectDB();
 
