@@ -3,35 +3,15 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config(); 
 
-// CORS configuration
-const corsOptions = {
+app.use(cors({
   origin: 'https://asset-dashboard-lime.vercel.app',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200,
-  maxAge: 86400, // 24 hours - cache preflight
-};
-
-app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
+}));
 
 const connectDB = require('./scylla_db/db_connect');
 connectDB();
 
 app.use(express.json());
-
-// Log all requests and responses
-app.use((req, res, next) => {
-  const originalJson = res.json;
-  res.json = function(data) {
-    console.log(`[${req.method}] ${req.path} -> Status: ${res.statusCode}`);
-    return originalJson.call(this, data);
-  };
-  next();
-});
 
 // STEP 1 - Disable ETag globally (MANDATORY)
 app.set("etag", false);
