@@ -3,6 +3,9 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config(); 
 
+// Trust proxy so we get real IPs
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: 'https://asset-dashboard-lime.vercel.app',
   credentials: true,
@@ -12,6 +15,23 @@ const connectDB = require('./scylla_db/db_connect');
 connectDB();
 
 app.use(express.json());
+
+// Log all OPTIONS requests and requests to debug 429
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    console.log(`[OPTIONS] ${req.path} - Preflight request`);
+  }
+  
+  const originalSend = res.send;
+  res.send = function(data) {
+    if (res.statusCode >= 400) {
+      console.log(`[${req.method}] ${req.path} - Status ${res.statusCode}`, typeof data === 'string' ? data.substring(0, 100) : data);
+    }
+    return originalSend.call(this, data);
+  };
+  
+  next();
+});
 
 // STEP 1 - Disable ETag globally (MANDATORY)
 app.set("etag", false);
