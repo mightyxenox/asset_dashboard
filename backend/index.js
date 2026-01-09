@@ -12,6 +12,18 @@ connectDB();
 
 app.use(express.json());
 
+// STEP 1 - Disable ETag globally (MANDATORY)
+app.set("etag", false);
+
+// STEP 2 - Disable caching headers globally (MANDATORY)
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
+  next();
+});
+
 app.use('/api', require('./routes/qty_routes'));
 
 app.use('/api', require('./routes/asset_list_routes'));
