@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { fetchWithAuth } from '../utils';
 import { useNavigate } from 'react-router-dom';
+import { useData } from '../context/DataContext';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', '#d0ed57'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { wallets, coins } = useData();
   const [groupBy, setGroupBy] = useState('wallet');
   const [walletFilter, setWalletFilter] = useState('');
   const [coinFilter, setCoinFilter] = useState('');
-  const [wallets, setWallets] = useState([]);
-  const [coins, setCoins] = useState([]);
   const [username, setUsername] = useState('User');
   const [dashboardData, setDashboardData] = useState(null);
   const [error, setError] = useState(null);
@@ -32,17 +32,13 @@ const Dashboard = () => {
     }
   };
 
-  const fetchFilters = async () => {
+  const fetchUsername = () => {
     try {
-      const res1 = await fetchWithAuth('/api/wallets');
-      const res2 = await fetchWithAuth('/api/coins');
-      setWallets(res1.wallets || []);
-      setCoins(res2.coins || []);
       const token = localStorage.getItem('token');
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUsername(payload.username);
     } catch (err) {
-      handleAuthError(err);
+      console.error('Error decoding token:', err);
     }
   };
 
@@ -61,13 +57,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchFilters();
+    fetchUsername();
   }, []);
 
   useEffect(() => {
     setLoading(true);
     fetchDashboard();
-    const interval = setInterval(fetchDashboard, 30000);
+    const interval = setInterval(fetchDashboard, 30000); // 30 seconds minimum
     return () => clearInterval(interval);
   }, [groupBy, walletFilter, coinFilter]);
 

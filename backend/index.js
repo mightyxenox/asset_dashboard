@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config(); 
 app.use(cors({
   origin: 'https://asset-dashboard-lime.vercel.app',
@@ -23,6 +24,33 @@ app.use((req, res, next) => {
   res.setHeader("Surrogate-Control", "no-store");
   next();
 });
+
+// STEP 4 - Add per-user rate limiting (OPTIONAL but good)
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // 100 requests per minute per user
+  keyGenerator: (req, res) => {
+    // Use user ID from token if available, otherwise use IP
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        return payload.user_id || payload.userId || req.ip;
+      }
+    } catch (err) {
+      // Fallback to IP if token parsing fails
+    }
+    return req.ip;
+  },
+  handler: (req, res) => {
+    res.status(429).json({
+      error: 'Too many requests. Please try again later.',
+      retryAfter: req.rateLimit.resetTime,
+    });
+  },
+});
+
+app.use('/api', limiter);
 
 app.use('/api', require('./routes/qty_routes'));
 
