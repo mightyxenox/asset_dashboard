@@ -2,10 +2,21 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config(); 
-app.use(cors({
+
+// CORS configuration
+const corsOptions = {
   origin: 'https://asset-dashboard-lime.vercel.app',
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400, // 24 hours - cache preflight
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 const connectDB = require('./scylla_db/db_connect');
 connectDB();
