@@ -25,7 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// STEP 4 - Add per-user rate limiting (OPTIONAL but good)
+// STEP 4 - Add per-user rate limiting (DISABLED for now - causing issues on Render)
+// NOTE: Re-enable when needed with proper Redis store for production
+/*
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minute window
   max: 1000, // 1000 requests per 15 minutes per user
@@ -68,6 +70,7 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+*/
 
 app.use('/api', require('./routes/qty_routes'));
 

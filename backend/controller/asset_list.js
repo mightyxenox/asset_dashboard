@@ -2,9 +2,14 @@ const { WalletAsset } = require('../scylla_db/schema');
 
 const getUserCoins = async (req, res) => {
   const user_id = req.user_id;
+  
+  console.log('getUserCoins: user_id =', user_id);
+  console.log('getUserCoins: req.user_id =', req.user_id);
 
   try {
     const assets = await WalletAsset.find({ user_id }, { coin_name: 1 });
+    console.log('getUserCoins: Found assets:', assets);
+    
     const coinsSet = new Set(assets.map(asset => asset.coin_name));
 
     res.json({ coins: Array.from(coinsSet) });
@@ -16,9 +21,13 @@ const getUserCoins = async (req, res) => {
 
 const getUserWallets = async (req, res) => {
   const user_id = req.user_id;
+  
+  console.log('getUserWallets: user_id =', user_id);
 
   try {
     const assets = await WalletAsset.find({ user_id }, { wallet_name: 1 });
+    console.log('getUserWallets: Found assets:', assets);
+    
     const walletsSet = new Set(assets.map(asset => asset.wallet_name));
 
     res.json({ wallets: Array.from(walletsSet) });
