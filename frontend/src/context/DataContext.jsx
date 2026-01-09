@@ -23,17 +23,29 @@ const getCachedData = () => {
   return null;
 };
 
-const setCacheData = (wallets, coins) => {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      wallets,
-      coins,
-      timestamp: Date.now(),
-    }));
-    console.log('DataContext: Saved data to cache');
-  } catch (err) {
-    console.error('Error saving cache:', err);
+const fetchWithRetry = async (path, maxRetries = 3) => {
+  let lastError;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`DataContext: Fetching ${path} (attempt ${attempt + 1}/${maxRetries + 1})`);
+      const response = await fetchWithAuth(path);
+      console.log(`DataContext: Success on ${path}`);
+      return response;
+    } catch (err) {
+      lastError = err;
+      console.error(`DataContext: Attempt ${attempt + 1} failed for ${path}:`, err.message);
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff: 500ms, 1s, 2s
+        const delay = Math.pow(2, attempt) * 500;
+        console.log(`DataContext: Retrying ${path} in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
+  
+  throw lastError;
 };
 
 export const DataProvider = ({ children }) => {
@@ -72,19 +84,19 @@ export const DataProvider = ({ children }) => {
       
       let walletsResponse;
       try {
-        walletsResponse = await fetchWithAuth('/api/wallets');
+        walletsResponse = await fetchWithRetry('/api/wallets');
         console.log('DataContext: Wallets response:', walletsResponse);
       } catch (walletErr) {
-        console.error('DataContext: Error fetching wallets:', walletErr);
+        console.error('DataContext: Error fetching wallets after retries:', walletErr);
         walletsResponse = { wallets: [] };
       }
       
       let coinsResponse;
       try {
-        coinsResponse = await fetchWithAuth('/api/coins');
+        coinsResponse = await fetchWithRetry('/api/coins');
         console.log('DataContext: Coins response:', coinsResponse);
       } catch (coinErr) {
-        console.error('DataContext: Error fetching coins:', coinErr);
+        console.error('DataContext: Error fetching coins after retries:', coinErr);
         setError(`Coins fetch failed: ${coinErr.message}`);
         coinsResponse = { coins: [] };
       }
