@@ -12,6 +12,16 @@ connectDB();
 
 app.use(express.json());
 
+// Log all requests and responses
+app.use((req, res, next) => {
+  const originalJson = res.json;
+  res.json = function(data) {
+    console.log(`[${req.method}] ${req.path} -> Status: ${res.statusCode}`);
+    return originalJson.call(this, data);
+  };
+  next();
+});
+
 // STEP 1 - Disable ETag globally (MANDATORY)
 app.set("etag", false);
 
@@ -41,6 +51,5 @@ app.use('/api', require('./routes/dashboard_routes'));
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-});
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
 });
